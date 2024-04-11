@@ -1,0 +1,13 @@
+version: '3.9'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    expose:
+      - '3011'
+    volumes:
+      - './:/app:ro'
+    ports:
+      - "3011:3011"

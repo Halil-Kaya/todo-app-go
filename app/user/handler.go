@@ -20,7 +20,7 @@ func (handler *UserHttpHandler) createUser(ctx *fiber.Ctx) error {
 	var request UserCreateDto
 	err := ctx.BodyParser(&request)
 	if err != nil {
-		handler.logger.Fatal(err)
+		handler.logger.Error(err)
 		return err
 	}
 
@@ -30,7 +30,7 @@ func (handler *UserHttpHandler) createUser(ctx *fiber.Ctx) error {
 
 	createdUser, err := handler.userService.CreateUser(request)
 	if err != nil {
-		handler.logger.Fatal(err)
+		handler.logger.Error(err)
 		return err
 	}
 	fmt.Println(createdUser)

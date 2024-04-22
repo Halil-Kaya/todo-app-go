@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
-	recover2 "github.com/gofiber/fiber/v2/middleware/recover"
+	"github.com/gofiber/fiber/v2/middleware/recover"
 	"todo/app/user"
 	"todo/config"
 	"todo/logger"
@@ -23,11 +23,10 @@ func main() {
 	userHttpHandler := user.NewUserHttpHandler(*userService, logger)
 
 	app := fiber.New()
-	app.Use(recover2.New())
+	app.Use(recover.New())
+	app.Use(cors.New(cors.ConfigDefault))
 
 	userHttpHandler.RegisterRoutes(app)
-
-	app.Use(cors.New(cors.ConfigDefault))
 
 	port := fmt.Sprintf(":%s", appConfig.Server.Port)
 	if err := app.Listen(port); err != nil {

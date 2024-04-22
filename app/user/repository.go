@@ -3,6 +3,7 @@ package user
 import (
 	"context"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.uber.org/zap"
@@ -33,6 +34,7 @@ func NewUserRepository(client *mongo.Client, logger *zap.SugaredLogger) (*UserRe
 
 func (repo *UserRepository) CreateUser(dto UserCreateDto) (*model.User, error) {
 	user := &model.User{
+		Id:       primitive.NewObjectID(),
 		Nickname: dto.Nickname,
 		FullName: dto.FullName,
 		Password: dto.Password,

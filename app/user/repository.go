@@ -47,3 +47,9 @@ func (repo *UserRepository) CreateUser(dto UserCreateDto) (*model.User, error) {
 	}
 	return user, nil
 }
+
+func (repo *UserRepository) FindByNickname(nickname string) *model.User {
+	var user *model.User
+	repo.collection.FindOne(context.Background(), bson.M{"nickname": nickname}).Decode(&user)
+	return user
+}

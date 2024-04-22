@@ -38,7 +38,7 @@ func (handler *UserHttpHandler) createUser(ctx *fiber.Ctx) error {
 		Id       string `json:"id"`
 		Nickname string `json:"nıckname"`
 	}{
-		Id:       createdUser.Id.String(),
+		Id:       createdUser.Id.Hex(),
 		Nickname: createdUser.Nickname,
 	})
 }

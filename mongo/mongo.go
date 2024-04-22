@@ -4,11 +4,12 @@ import (
 	"context"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"todo/config"
 	"todo/logger"
 )
 
-func ConnectDb() *mongo.Client {
-	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
+func ConnectDb(config config.Config) *mongo.Client {
+	clientOptions := options.Client().ApplyURI(config.MongoDB.ConnectionUrl)
 	client, err := mongo.Connect(context.Background(), clientOptions)
 	logger := logger.GetLogger()
 	if err != nil {

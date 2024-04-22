@@ -11,3 +11,18 @@ services:
       - './:/app:ro'
     ports:
       - "3011:3011"
+    networks:
+      - app-net
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo
+    container_name: app-mongo
+    ports:
+      - 27016:27017
+    networks:
+      - app-net
+
+networks:
+  app-net:

@@ -13,9 +13,8 @@ import (
 
 func main() {
 	appConfig := config.New()
-	mongoDb := mongo.ConnectDb()
+	mongoDb := mongo.ConnectDb(appConfig)
 	logger := logger.GetLogger()
-
 	userRepository, err := user.NewUserRepository(mongoDb, logger)
 	if err != nil {
 		logger.Fatal(err)

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	middlewareLogger "github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"todo/app/user"
 	"todo/config"
@@ -23,6 +24,11 @@ func main() {
 	userHttpHandler := user.NewUserHttpHandler(*userService, logger)
 
 	app := fiber.New()
+	app.Use(middlewareLogger.New(middlewareLogger.Config{
+		Format:     "${pid} ${status} - ${method} ${path}\n",
+		TimeFormat: "02-Jan-2006",
+		TimeZone:   "America/New_York",
+	}))
 	app.Use(recover.New())
 	app.Use(cors.New(cors.ConfigDefault))
 

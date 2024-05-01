@@ -5,6 +5,7 @@ import (
 	"github.com/joho/godotenv"
 	"log"
 	"os"
+	"strconv"
 )
 
 type Config struct {
@@ -23,9 +24,8 @@ type Server struct {
 }
 
 type Jwt struct {
-	Secret    string
-	Expires   string
-	Algorithm string
+	Secret  string
+	Expires int
 }
 
 type Redis struct {
@@ -51,10 +51,11 @@ func New() Config {
 		ConnectionUrl: os.Getenv("REDIS_CONNECTION_URL"),
 	}
 
+	jwtExpires, _ := strconv.Atoi(os.Getenv("JWT_EXPIRES"))
+
 	config.Jwt = Jwt{
-		Algorithm: os.Getenv("JWT_ALGORITHM"),
-		Expires:   os.Getenv("JWT_EXPIRES"),
-		Secret:    os.Getenv("JWT_SECRET"),
+		Expires: jwtExpires,
+		Secret:  os.Getenv("JWT_SECRET"),
 	}
 	return config
 }

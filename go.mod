@@ -11,6 +11,7 @@ require (
 	github.com/go-playground/validator/v10 v10.19.0 // indirect
 	github.com/gofiber/fiber/v2 v2.52.4 // indirect
 	github.com/gofiber/storage/mongodb/v2 v2.0.0 // indirect
+	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect

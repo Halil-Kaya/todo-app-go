@@ -6,6 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	middlewareLogger "github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
+	"todo/app/auth"
 	"todo/app/user"
 	"todo/config"
 	"todo/logger"
@@ -23,6 +24,9 @@ func main() {
 	userService := user.NewUserService(*userRepository, logger)
 	userHttpHandler := user.NewUserHttpHandler(*userService, logger)
 
+	authService := auth.NewAuthService(*userService, logger, appConfig)
+	authHttpHandler := auth.NewAuthHttpHandler(*authService, logger)
+
 	app := fiber.New()
 	app.Use(middlewareLogger.New(middlewareLogger.Config{
 		Format:     "${pid} ${status} - ${method} ${path}\n",
@@ -33,6 +37,7 @@ func main() {
 	app.Use(cors.New(cors.ConfigDefault))
 
 	userHttpHandler.RegisterRoutes(app)
+	authHttpHandler.RegisterRoutes(app)
 
 	port := fmt.Sprintf(":%s", appConfig.Server.Port)
 	if err := app.Listen(port); err != nil {

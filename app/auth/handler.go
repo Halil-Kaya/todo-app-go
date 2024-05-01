@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/zap"
 	"todo/app/validation"
@@ -27,9 +26,7 @@ func (h *AuthHttpHandler) login(ctx *fiber.Ctx) error {
 	if errors := validation.Validate(request); len(errors) > 0 {
 		return ctx.JSON(errors)
 	}
-	fmt.Println("istek geldi?")
 	loginAck := h.authService.Login(request)
-	fmt.Sprintf("loginAck -> ", loginAck)
 	return ctx.JSON(loginAck)
 }
 

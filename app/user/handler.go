@@ -1,7 +1,6 @@
 package user
 
 import (
-	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/zap"
 	"todo/app/validation"
@@ -33,7 +32,6 @@ func (handler *UserHttpHandler) createUser(ctx *fiber.Ctx) error {
 		handler.logger.Error(err)
 		return err
 	}
-	fmt.Println(createdUser)
 	return ctx.JSON(struct {
 		Id       string `json:"id"`
 		Nickname string `json:"nıckname"`

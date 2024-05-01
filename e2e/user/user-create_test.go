@@ -13,7 +13,6 @@ import (
 var testurl = "http://localhost:3011/user/create"
 
 func TestUserCreate(t *testing.T) {
-	fmt.Println("test çalıştı.")
 	user := model.User{Nickname: "asdasd", Password: "qweqweq", FullName: "fafasfas"}
 	reqBody, _ := json.Marshal(user)
 

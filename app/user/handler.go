@@ -1,18 +1,22 @@
 package user
 
 import (
+	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/zap"
+	"todo/app/auth"
+	"todo/app/model"
 	"todo/app/validation"
 )
 
 type UserHttpHandler struct {
 	userService UserService
+	authGuard   auth.AuthGuard
 	logger      *zap.SugaredLogger
 }
 
-func NewUserHttpHandler(userService UserService, logger *zap.SugaredLogger) *UserHttpHandler {
-	return &UserHttpHandler{userService, logger}
+func NewUserHttpHandler(userService UserService, authGuard auth.AuthGuard, logger *zap.SugaredLogger) *UserHttpHandler {
+	return &UserHttpHandler{userService, authGuard, logger}
 }
 
 func (handler *UserHttpHandler) createUser(ctx *fiber.Ctx) error {
@@ -41,7 +45,15 @@ func (handler *UserHttpHandler) createUser(ctx *fiber.Ctx) error {
 	})
 }
 
+func (handler *UserHttpHandler) me(ctx *fiber.Ctx) error {
+
+	user := ctx.Locals("user").(*model.User)
+	fmt.Println("gelen user -< ", user)
+	return nil
+}
+
 func (h *UserHttpHandler) RegisterRoutes(app *fiber.App) {
 	appGroup := app.Group("/user")
 	appGroup.Post("/create", h.createUser)
+	appGroup.Get("/me", h.authGuard.JWTGuard(h.me))
 }

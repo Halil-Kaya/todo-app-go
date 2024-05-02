@@ -5,17 +5,22 @@ import (
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
 	"time"
-	"todo/app/user"
+	"todo/app/model"
 	"todo/config"
 )
 
+type UserService interface {
+	FindByNickname(nickname string) *model.User
+	FindById(id string) *model.User
+}
+
 type AuthService struct {
-	userService user.UserService
+	userService UserService
 	logger      *zap.SugaredLogger
 	config      config.Config
 }
 
-func NewAuthService(userService user.UserService, logger *zap.SugaredLogger, config config.Config) *AuthService {
+func NewAuthService(userService UserService, logger *zap.SugaredLogger, config config.Config) *AuthService {
 	return &AuthService{userService, logger, config}
 }
 
@@ -32,6 +37,14 @@ func (authService *AuthService) Login(loginDto LoginDto) LoginAck {
 		panic("Nickname or Password is incorrect")
 	}
 
+	tokenString := authService.CreateToken(user)
+
+	return LoginAck{
+		Token: tokenString,
+	}
+}
+
+func (authService *AuthService) CreateToken(user *model.User) string {
 	tokenDuration := time.Duration(authService.config.Jwt.Expires) * time.Minute
 	expirationTime := time.Now().Add(tokenDuration)
 	claims := JWTClaim{
@@ -45,10 +58,31 @@ func (authService *AuthService) Login(loginDto LoginDto) LoginAck {
 	tokenString, err := token.SignedString([]byte(authService.config.Jwt.Secret))
 
 	if err != nil {
-		panic("There is an error!")
+		panic("There is an error while creating token!")
 	}
 
-	return LoginAck{
-		Token: tokenString,
+	return tokenString
+}
+
+// returning userId
+func (authService *AuthService) ValidateToken(token string) string {
+	tokenClaim, err := jwt.ParseWithClaims(
+		token,
+		&JWTClaim{},
+		func(token *jwt.Token) (interface{}, error) {
+			return []byte(authService.config.Jwt.Secret), nil
+		},
+	)
+
+	if err != nil {
+		panic(err)
 	}
+	claims, ok := tokenClaim.Claims.(*JWTClaim)
+	if !ok {
+		panic("couldn't parse claims")
+	}
+	if claims.ExpiresAt < time.Now().Local().Unix() {
+		panic("token expired")
+	}
+	return claims.UserID
 }

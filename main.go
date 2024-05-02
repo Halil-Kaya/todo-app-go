@@ -22,10 +22,12 @@ func main() {
 		logger.Fatal(err)
 	}
 	userService := user.NewUserService(*userRepository, logger)
-	userHttpHandler := user.NewUserHttpHandler(*userService, logger)
 
-	authService := auth.NewAuthService(*userService, logger, appConfig)
+	authService := auth.NewAuthService(userService, logger, appConfig)
+	authGuard := auth.NewAuthGuard(*authService, logger)
 	authHttpHandler := auth.NewAuthHttpHandler(*authService, logger)
+
+	userHttpHandler := user.NewUserHttpHandler(userService, *authGuard, logger)
 
 	app := fiber.New()
 	app.Use(middlewareLogger.New(middlewareLogger.Config{

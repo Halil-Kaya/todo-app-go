@@ -6,16 +6,22 @@ import (
 	"todo/app/model"
 )
 
-type UserService struct {
+type UserService interface {
+	FindByNickname(nickname string) *model.User
+	FindById(id string) *model.User
+	CreateUser(dto UserCreateDto) (*model.User, error)
+}
+
+type userService struct {
 	userRepository UserRepository
 	logger         *zap.SugaredLogger
 }
 
-func NewUserService(userRepository UserRepository, logger *zap.SugaredLogger) *UserService {
-	return &UserService{userRepository, logger}
+func NewUserService(userRepository UserRepository, logger *zap.SugaredLogger) UserService {
+	return &userService{userRepository, logger}
 }
 
-func (service *UserService) CreateUser(dto UserCreateDto) (*model.User, error) {
+func (service *userService) CreateUser(dto UserCreateDto) (*model.User, error) {
 
 	nicknameUser := service.FindByNickname(dto.Nickname)
 	if nicknameUser != nil {
@@ -33,8 +39,13 @@ func (service *UserService) CreateUser(dto UserCreateDto) (*model.User, error) {
 	return user, nil
 }
 
-func (service *UserService) FindByNickname(nickname string) *model.User {
+func (service *userService) FindByNickname(nickname string) *model.User {
 	user := service.userRepository.FindByNickname(nickname)
+	return user
+}
+
+func (service *userService) FindById(userId string) *model.User {
+	user := service.userRepository.FindById(userId)
 	return user
 }
 

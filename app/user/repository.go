@@ -7,6 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.uber.org/zap"
+	"time"
 	"todo/app/model"
 )
 
@@ -34,10 +35,11 @@ func NewUserRepository(client *mongo.Client, logger *zap.SugaredLogger) (*UserRe
 
 func (repo *UserRepository) CreateUser(dto UserCreateDto) (*model.User, error) {
 	user := &model.User{
-		Id:       primitive.NewObjectID(),
-		Nickname: dto.Nickname,
-		FullName: dto.FullName,
-		Password: dto.Password,
+		Id:        primitive.NewObjectID(),
+		Nickname:  dto.Nickname,
+		FullName:  dto.FullName,
+		Password:  dto.Password,
+		CreatedAt: time.Now(),
 	}
 
 	_, err := repo.collection.InsertOne(context.Background(), user)
@@ -51,5 +53,12 @@ func (repo *UserRepository) CreateUser(dto UserCreateDto) (*model.User, error) {
 func (repo *UserRepository) FindByNickname(nickname string) *model.User {
 	var user *model.User
 	repo.collection.FindOne(context.Background(), bson.M{"nickname": nickname}).Decode(&user)
+	return user
+}
+
+func (repo *UserRepository) FindById(userId string) *model.User {
+	var user *model.User
+	objectId, _ := primitive.ObjectIDFromHex(userId)
+	repo.collection.FindOne(context.Background(), bson.M{"_id": objectId}).Decode(&user)
 	return user
 }

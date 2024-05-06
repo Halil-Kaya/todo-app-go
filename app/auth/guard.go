@@ -4,6 +4,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/zap"
 	"strings"
+	"todo/app/exception"
 )
 
 type AuthGuard struct {
@@ -20,16 +21,19 @@ func (authGuard AuthGuard) JWTGuard(handler fiber.Handler) fiber.Handler {
 		headers := ctx.GetReqHeaders()
 		bearToken, exists := headers["Authorization"]
 		if !exists {
-			return ctx.SendStatus(fiber.StatusUnauthorized)
+			return exception.NewUnauthorized()
 		}
 		token := strings.Replace(bearToken[0], "Bearer ", "", -1)
 		if token == "" {
-			return ctx.SendStatus(fiber.StatusUnauthorized)
+			return exception.NewUnauthorized()
 		}
-		userId := authGuard.authService.ValidateToken(token)
+		userId, err := authGuard.authService.ValidateToken(token)
+		if err != nil {
+			return exception.NewUnauthorized()
+		}
 		user := authGuard.authService.userService.FindById(userId)
 		if user == nil {
-			return ctx.SendStatus(fiber.StatusUnauthorized)
+			return exception.NewUnauthorized()
 		}
 		ctx.Locals("user", user)
 		return handler(ctx)

@@ -3,6 +3,7 @@ package user
 import (
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
+	"todo/app/exception"
 	"todo/app/model"
 )
 
@@ -25,7 +26,7 @@ func (service *userService) CreateUser(dto UserCreateDto) (*model.User, error) {
 
 	nicknameUser := service.FindByNickname(dto.Nickname)
 	if nicknameUser != nil {
-		panic("This nickname is already taken")
+		return nil, exception.NewNicknameIsAlreadyTaken()
 	}
 
 	dto.Password, _ = HashPassword(dto.Password)

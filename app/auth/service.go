@@ -5,6 +5,7 @@ import (
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
 	"time"
+	"todo/app/exception"
 	"todo/app/model"
 	"todo/config"
 )
@@ -65,7 +66,7 @@ func (authService *AuthService) CreateToken(user *model.User) string {
 }
 
 // returning userId
-func (authService *AuthService) ValidateToken(token string) string {
+func (authService *AuthService) ValidateToken(token string) (string, error) {
 	tokenClaim, err := jwt.ParseWithClaims(
 		token,
 		&JWTClaim{},
@@ -75,7 +76,7 @@ func (authService *AuthService) ValidateToken(token string) string {
 	)
 
 	if err != nil {
-		panic(err)
+		return "", exception.NewUnauthorized()
 	}
 	claims, ok := tokenClaim.Claims.(*JWTClaim)
 	if !ok {
@@ -84,5 +85,5 @@ func (authService *AuthService) ValidateToken(token string) string {
 	if claims.ExpiresAt < time.Now().Local().Unix() {
 		panic("token expired")
 	}
-	return claims.UserID
+	return claims.UserID, nil
 }

@@ -3,7 +3,6 @@ package exception
 import "fmt"
 
 type Unauthorized struct {
-	ICustomException
 	Code    int
 	Message string
 }

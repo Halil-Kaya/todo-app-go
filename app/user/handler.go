@@ -6,6 +6,7 @@ import (
 	"go.uber.org/zap"
 	"todo/app/auth"
 	"todo/app/model"
+	"todo/app/utility"
 	"todo/app/validation"
 )
 
@@ -24,25 +25,29 @@ func (handler *UserHttpHandler) createUser(ctx *fiber.Ctx) error {
 	err := ctx.BodyParser(&request)
 	if err != nil {
 		handler.logger.Error(err)
-		return err
+		return utility.ErrorResponse(ctx, err)
 	}
 
 	if errors := validation.Validate(request); len(errors) > 0 {
-		return ctx.JSON(errors)
+		return utility.ErrorResponse(ctx, errors)
+
 	}
 
 	createdUser, err := handler.userService.CreateUser(request)
 	if err != nil {
 		handler.logger.Error(err)
-		return err
+		return utility.ErrorResponse(ctx, err)
 	}
-	return ctx.JSON(struct {
+
+	ack := struct {
 		Id       string `json:"id"`
 		Nickname string `json:"nıckname"`
 	}{
 		Id:       createdUser.Id.Hex(),
 		Nickname: createdUser.Nickname,
-	})
+	}
+
+	return utility.OkResponse(ctx, ack)
 }
 
 func (handler *UserHttpHandler) me(ctx *fiber.Ctx) error {

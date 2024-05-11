@@ -19,11 +19,11 @@ func NewUserHttpHandler(userService UserService, authGuard auth.AuthGuard, logge
 	return &UserHttpHandler{userService, authGuard, logger}
 }
 
-func (handler *UserHttpHandler) createUser(ctx *fiber.Ctx) error {
+func (h *UserHttpHandler) createUser(ctx *fiber.Ctx) error {
 	var request UserCreateDto
 	err := ctx.BodyParser(&request)
 	if err != nil {
-		handler.logger.Error(err)
+		h.logger.Error(err)
 		return utility.ErrorResponse(ctx, err)
 	}
 
@@ -32,9 +32,9 @@ func (handler *UserHttpHandler) createUser(ctx *fiber.Ctx) error {
 
 	}
 
-	createdUser, err := handler.userService.CreateUser(request)
+	createdUser, err := h.userService.CreateUser(request)
 	if err != nil {
-		handler.logger.Error(err)
+		h.logger.Error(err)
 		return utility.ErrorResponse(ctx, err)
 	}
 
@@ -46,7 +46,7 @@ func (handler *UserHttpHandler) createUser(ctx *fiber.Ctx) error {
 	return utility.OkResponse(ctx, ack)
 }
 
-func (handler *UserHttpHandler) me(ctx *fiber.Ctx) error {
+func (h *UserHttpHandler) me(ctx *fiber.Ctx) error {
 	user := ctx.Locals("user").(*model.User)
 	ack := UserMeAck{
 		Id:       user.Id.Hex(),

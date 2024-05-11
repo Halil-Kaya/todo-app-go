@@ -2,21 +2,53 @@ package todo
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"time"
+	"todo/app/core/utility"
+	"todo/app/core/validation"
 	"todo/app/src/auth"
+	"todo/app/src/model"
 )
 
 type TodoHttpHandler struct {
-	authGuard auth.AuthGuard
+	authGuard   auth.AuthGuard
+	todoService TodoService
 }
 
-func NewTodoHttpHandler(authGuard auth.AuthGuard) *TodoHttpHandler {
+func NewTodoHttpHandler(authGuard auth.AuthGuard, todoService TodoService) *TodoHttpHandler {
 	return &TodoHttpHandler{
 		authGuard,
+		todoService,
 	}
 }
 
 func (h *TodoHttpHandler) createTodo(ctx *fiber.Ctx) error {
-	return nil
+	var request TodoCreateDto
+	err := ctx.BodyParser(&request)
+	if err != nil {
+		return utility.ErrorResponse(ctx, err)
+	}
+	if errors := validation.Validate(request); len(errors) > 0 {
+		return utility.ErrorResponse(ctx, errors)
+
+	}
+	user := ctx.Locals("user").(*model.User)
+
+	model := &model.Todo{
+		Id:        primitive.NewObjectID(),
+		Title:     request.Title,
+		Content:   request.Content,
+		UserId:    user.Id,
+		CreatedAt: time.Now(),
+	}
+
+	createdTodo, err := h.todoService.CreateTodo(model)
+
+	if err != nil {
+		return utility.ErrorResponse(ctx, err)
+	}
+
+	return utility.OkResponse(ctx, createdTodo)
 }
 
 func (h *TodoHttpHandler) getTodos(ctx *fiber.Ctx) error {

@@ -22,7 +22,7 @@ func (authGuard AuthGuard) JWTGuard(handler fiber.Handler) fiber.Handler {
 		headers := ctx.GetReqHeaders()
 		bearToken, exists := headers["Authorization"]
 		if !exists {
-			return exception.NewUnauthorized()
+			return utility.ErrorResponse(ctx, exception.NewUnauthorized())
 		}
 		token := strings.Replace(bearToken[0], "Bearer ", "", -1)
 		if token == "" {

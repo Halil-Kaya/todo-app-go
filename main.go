@@ -29,8 +29,11 @@ func main() {
 	authGuard := auth.NewAuthGuard(*authService, logger)
 	authHttpHandler := auth.NewAuthHttpHandler(*authService, logger)
 
+	todoRepository := todo.NewTodoRepository(mongoDb)
+	todoService := todo.NewTodoService(todoRepository)
+
 	userHttpHandler := user.NewUserHttpHandler(userService, *authGuard, logger)
-	todoHttpHandler := todo.NewTodoHttpHandler(*authGuard)
+	todoHttpHandler := todo.NewTodoHttpHandler(*authGuard, todoService)
 
 	app := fiber.New()
 	app.Use(middleware.ReqId)

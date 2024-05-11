@@ -3,8 +3,8 @@ package auth
 import (
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/zap"
-	"todo/app/utility"
-	"todo/app/validation"
+	"todo/app/core/utility"
+	"todo/app/core/validation"
 )
 
 type AuthHttpHandler struct {

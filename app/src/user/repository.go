@@ -8,7 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.uber.org/zap"
 	"time"
-	"todo/app/model"
+	"todo/app/src/model"
 )
 
 type UserRepository struct {

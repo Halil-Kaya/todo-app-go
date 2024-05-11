@@ -3,10 +3,10 @@ package user
 import (
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/zap"
-	"todo/app/auth"
-	"todo/app/model"
-	"todo/app/utility"
-	"todo/app/validation"
+	"todo/app/core/utility"
+	"todo/app/core/validation"
+	"todo/app/src/auth"
+	"todo/app/src/model"
 )
 
 type UserHttpHandler struct {

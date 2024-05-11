@@ -4,8 +4,8 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/zap"
 	"strings"
-	"todo/app/exception"
-	"todo/app/utility"
+	"todo/app/core/exception"
+	"todo/app/core/utility"
 )
 
 type AuthGuard struct {

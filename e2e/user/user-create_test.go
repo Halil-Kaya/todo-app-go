@@ -7,7 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"testing"
-	"todo/app/model"
+	"todo/app/src/model"
 )
 
 var testurl = "http://localhost:3011/user/create"

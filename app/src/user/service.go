@@ -3,8 +3,8 @@ package user
 import (
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
-	"todo/app/exception"
-	"todo/app/model"
+	"todo/app/core/exception"
+	"todo/app/src/model"
 )
 
 type UserService interface {

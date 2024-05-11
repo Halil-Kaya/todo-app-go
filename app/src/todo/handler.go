@@ -52,7 +52,12 @@ func (h *TodoHttpHandler) createTodo(ctx *fiber.Ctx) error {
 }
 
 func (h *TodoHttpHandler) getTodos(ctx *fiber.Ctx) error {
-	return nil
+	user := ctx.Locals("user").(*model.User)
+	todos, err := h.todoService.todoRepository.GetTodos(user.Id)
+	if err != nil {
+		return utility.ErrorResponse(ctx, err)
+	}
+	return utility.OkResponse(ctx, todos)
 }
 
 func (h *TodoHttpHandler) updateTodo(ctx *fiber.Ctx) error {

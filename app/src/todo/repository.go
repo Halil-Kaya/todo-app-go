@@ -2,6 +2,8 @@ package todo
 
 import (
 	"context"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"todo/app/src/model"
 )
@@ -22,4 +24,25 @@ func (repo *TodoRepository) CreateTodo(dto *model.Todo) (*model.Todo, error) {
 		return nil, err
 	}
 	return dto, nil
+}
+
+func (repo *TodoRepository) GetTodos(userId primitive.ObjectID) ([]*model.Todo, error) {
+	cursor, err := repo.collection.Find(context.Background(), bson.M{"userid": userId})
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(context.Background())
+	var todos []*model.Todo
+	for cursor.Next(context.Background()) {
+		var todo model.Todo
+		if err := cursor.Decode(&todo); err != nil {
+			return nil, err
+		}
+		todos = append(todos, &todo)
+	}
+
+	if err := cursor.Err(); err != nil {
+		return nil, err
+	}
+	return todos, nil
 }

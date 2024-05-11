@@ -10,3 +10,9 @@ type UserCreateAck struct {
 	Id       string
 	Nickname string
 }
+
+type UserMeAck struct {
+	Id       string `json:"id"`
+	Nickname string `json:"nickname"`
+	FullName string `json:"fullName"`
+}

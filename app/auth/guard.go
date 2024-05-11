@@ -5,6 +5,7 @@ import (
 	"go.uber.org/zap"
 	"strings"
 	"todo/app/exception"
+	"todo/app/utility"
 )
 
 type AuthGuard struct {
@@ -25,15 +26,15 @@ func (authGuard AuthGuard) JWTGuard(handler fiber.Handler) fiber.Handler {
 		}
 		token := strings.Replace(bearToken[0], "Bearer ", "", -1)
 		if token == "" {
-			return exception.NewUnauthorized()
+			return utility.ErrorResponse(ctx, exception.NewUnauthorized())
 		}
 		userId, err := authGuard.authService.ValidateToken(token)
 		if err != nil {
-			return exception.NewUnauthorized()
+			return utility.ErrorResponse(ctx, exception.NewUnauthorized())
 		}
 		user := authGuard.authService.userService.FindById(userId)
 		if user == nil {
-			return exception.NewUnauthorized()
+			return utility.ErrorResponse(ctx, exception.NewUnauthorized())
 		}
 		ctx.Locals("user", user)
 		return handler(ctx)

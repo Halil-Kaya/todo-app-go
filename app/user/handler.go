@@ -1,7 +1,6 @@
 package user
 
 import (
-	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/zap"
 	"todo/app/auth"
@@ -39,10 +38,7 @@ func (handler *UserHttpHandler) createUser(ctx *fiber.Ctx) error {
 		return utility.ErrorResponse(ctx, err)
 	}
 
-	ack := struct {
-		Id       string `json:"id"`
-		Nickname string `json:"nıckname"`
-	}{
+	ack := UserCreateAck{
 		Id:       createdUser.Id.Hex(),
 		Nickname: createdUser.Nickname,
 	}
@@ -51,10 +47,13 @@ func (handler *UserHttpHandler) createUser(ctx *fiber.Ctx) error {
 }
 
 func (handler *UserHttpHandler) me(ctx *fiber.Ctx) error {
-
 	user := ctx.Locals("user").(*model.User)
-	fmt.Println("gelen user -< ", user)
-	return nil
+	ack := UserMeAck{
+		Id:       user.Id.Hex(),
+		Nickname: user.Nickname,
+		FullName: user.FullName,
+	}
+	return utility.OkResponse(ctx, ack)
 }
 
 func (h *UserHttpHandler) RegisterRoutes(app *fiber.App) {

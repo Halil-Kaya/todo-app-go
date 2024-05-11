@@ -3,6 +3,7 @@ package auth
 import (
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/zap"
+	"todo/app/utility"
 	"todo/app/validation"
 )
 
@@ -20,7 +21,7 @@ func (h *AuthHttpHandler) login(ctx *fiber.Ctx) error {
 	err := ctx.BodyParser(&request)
 	if err != nil {
 		h.logger.Error(err)
-		return err
+		return utility.ErrorResponse(ctx, err)
 	}
 
 	if errors := validation.Validate(request); len(errors) > 0 {
@@ -28,10 +29,11 @@ func (h *AuthHttpHandler) login(ctx *fiber.Ctx) error {
 	}
 	loginAck, err := h.authService.Login(request)
 	if err != nil {
-		return err
+		h.logger.Error(err)
+		return utility.ErrorResponse(ctx, err)
 	}
 
-	return ctx.JSON(loginAck)
+	return utility.OkResponse(ctx, loginAck)
 }
 
 func (h *AuthHttpHandler) RegisterRoutes(app *fiber.App) {

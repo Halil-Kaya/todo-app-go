@@ -7,6 +7,7 @@ import (
 	middlewareLogger "github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"todo/app/auth"
+	"todo/app/middleware"
 	"todo/app/user"
 	"todo/config"
 	"todo/logger"
@@ -30,6 +31,7 @@ func main() {
 	userHttpHandler := user.NewUserHttpHandler(userService, *authGuard, logger)
 
 	app := fiber.New()
+	app.Use(middleware.ReqId)
 	app.Use(middlewareLogger.New(middlewareLogger.Config{
 		Format:     "${pid} ${status} - ${method} ${path}\n",
 		TimeFormat: "02-Jan-2006",

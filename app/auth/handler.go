@@ -26,7 +26,11 @@ func (h *AuthHttpHandler) login(ctx *fiber.Ctx) error {
 	if errors := validation.Validate(request); len(errors) > 0 {
 		return ctx.JSON(errors)
 	}
-	loginAck := h.authService.Login(request)
+	loginAck, err := h.authService.Login(request)
+	if err != nil {
+		return err
+	}
+
 	return ctx.JSON(loginAck)
 }
 

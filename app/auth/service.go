@@ -25,24 +25,24 @@ func NewAuthService(userService UserService, logger *zap.SugaredLogger, config c
 	return &AuthService{userService, logger, config}
 }
 
-func (authService *AuthService) Login(loginDto LoginDto) LoginAck {
+func (authService *AuthService) Login(loginDto LoginDto) (*LoginAck, error) {
 	nickname := loginDto.Nickname
 	password := loginDto.Password
 	user := authService.userService.FindByNickname(nickname)
 	if user == nil {
-		panic("Nickname or Password is incorrect")
+		return nil, exception.NewUnauthorized()
 	}
 
 	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 	if err != nil {
-		panic("Nickname or Password is incorrect")
+		return nil, exception.NewUnauthorized()
 	}
 
 	tokenString := authService.CreateToken(user)
 
-	return LoginAck{
+	return &LoginAck{
 		Token: tokenString,
-	}
+	}, nil
 }
 
 func (authService *AuthService) CreateToken(user *model.User) string {

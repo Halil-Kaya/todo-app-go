@@ -7,29 +7,11 @@ import (
 	middlewareLogger "github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"todo/app/auth"
-	"todo/app/exception"
 	"todo/app/user"
 	"todo/config"
 	"todo/logger"
 	"todo/mongo"
 )
-
-func responseFormatMiddleware(c *fiber.Ctx) error {
-
-	if err := c.Next(); err != nil {
-		customException, ok := err.(exception.ICustomException)
-		//custom exception
-		if ok {
-			fmt.Println("code -> ", customException.GetCode())
-			//TODO format here
-		}
-
-		return err
-	}
-
-	//TODO there is no error. format response
-	return nil
-}
 
 func main() {
 	appConfig := config.New()
@@ -55,8 +37,6 @@ func main() {
 	}))
 	app.Use(recover.New())
 	app.Use(cors.New(cors.ConfigDefault))
-
-	app.Use(responseFormatMiddleware)
 
 	userHttpHandler.RegisterRoutes(app)
 	authHttpHandler.RegisterRoutes(app)

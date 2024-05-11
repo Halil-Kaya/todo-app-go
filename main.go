@@ -8,6 +8,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"todo/app/core/middleware"
 	"todo/app/src/auth"
+	"todo/app/src/todo"
 	"todo/app/src/user"
 	"todo/config"
 	"todo/logger"
@@ -29,6 +30,7 @@ func main() {
 	authHttpHandler := auth.NewAuthHttpHandler(*authService, logger)
 
 	userHttpHandler := user.NewUserHttpHandler(userService, *authGuard, logger)
+	todoHttpHandler := todo.NewTodoHttpHandler(*authGuard)
 
 	app := fiber.New()
 	app.Use(middleware.ReqId)
@@ -42,6 +44,7 @@ func main() {
 
 	userHttpHandler.RegisterRoutes(app)
 	authHttpHandler.RegisterRoutes(app)
+	todoHttpHandler.RegisterRoutes(app)
 
 	port := fmt.Sprintf(":%s", appConfig.Server.Port)
 	if err := app.Listen(port); err != nil {

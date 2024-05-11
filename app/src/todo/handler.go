@@ -57,7 +57,17 @@ func (h *TodoHttpHandler) getTodos(ctx *fiber.Ctx) error {
 	if err != nil {
 		return utility.ErrorResponse(ctx, err)
 	}
-	return utility.OkResponse(ctx, todos)
+	var todosAck []TodoAck
+	for _, todo := range todos {
+		todosAck = append(todosAck, TodoAck{
+			Id:        todo.Id.Hex(),
+			Title:     todo.Title,
+			Content:   todo.Content,
+			CreatedAt: todo.CreatedAt,
+		})
+	}
+	ack := TodoGetAck{Todos: todosAck}
+	return utility.OkResponse(ctx, ack)
 }
 
 func (h *TodoHttpHandler) updateTodo(ctx *fiber.Ctx) error {

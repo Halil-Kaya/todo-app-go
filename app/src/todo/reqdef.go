@@ -9,14 +9,14 @@ type TodoCreateDto struct {
 
 type TodoCreateAck struct {
 	Id        string    `json:"id"`
-	Title     string    `json:"title"`
-	Content   string    `json:"content"`
+	Title     string    `json:"title" validate:"required,min=2"`
+	Content   string    `json:"content" validate:"required,min=2"`
 	CreatedAt time.Time `json:"createdAt"`
 }
 
 type TodoUpdateDto struct {
-	Title   string `json:"title"`
-	Content string `json:"content"`
+	Title   *string `json:"title" validate:"min=2"`
+	Content *string `json:"content" validate:"min=2"`
 }
 
 type TodoUpdateAck struct {

@@ -46,3 +46,16 @@ func (repo *TodoRepository) GetTodos(userId primitive.ObjectID) ([]*model.Todo, 
 	}
 	return todos, nil
 }
+
+func (repo *TodoRepository) FindById(todoId string) *model.Todo {
+	var todo *model.Todo
+	objectId, _ := primitive.ObjectIDFromHex(todoId)
+	repo.collection.FindOne(context.Background(), bson.M{"_id": objectId}).Decode(&todo)
+	return todo
+}
+
+func (repo *TodoRepository) UpdateTodo(todoId primitive.ObjectID, updateFields bson.D) error {
+	updateQuery := bson.D{{"$set", updateFields}}
+	_, err := repo.collection.UpdateOne(context.Background(), bson.D{{"_id", todoId}}, updateQuery)
+	return err
+}

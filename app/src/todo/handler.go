@@ -57,7 +57,7 @@ func (h *TodoHttpHandler) getTodos(ctx *fiber.Ctx) error {
 	if err != nil {
 		return utility.ErrorResponse(ctx, err)
 	}
-	var todosAck []TodoAck
+	todosAck := make([]TodoAck, 0)
 	for _, todo := range todos {
 		todosAck = append(todosAck, TodoAck{
 			Id:        todo.Id.Hex(),
@@ -71,7 +71,23 @@ func (h *TodoHttpHandler) getTodos(ctx *fiber.Ctx) error {
 }
 
 func (h *TodoHttpHandler) updateTodo(ctx *fiber.Ctx) error {
-	return nil
+	var request TodoUpdateDto
+	err := ctx.BodyParser(&request)
+	if err != nil {
+		return utility.ErrorResponse(ctx, err)
+	}
+	if errors := validation.Validate(request); len(errors) > 0 {
+		return utility.ErrorResponse(ctx, errors)
+
+	}
+	todoId := ctx.Params("todoId")
+	err = h.todoService.UpdateTodo(todoId, request)
+
+	if err != nil {
+		return utility.ErrorResponse(ctx, err)
+	}
+
+	return utility.OkResponse(ctx, struct{}{})
 }
 
 func (h *TodoHttpHandler) deleteTodo(ctx *fiber.Ctx) error {

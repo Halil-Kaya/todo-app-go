@@ -38,3 +38,12 @@ func (service *TodoService) UpdateTodo(todoId string, dto TodoUpdateDto) error {
 	err := service.todoRepository.UpdateTodo(todo.Id, updateFields)
 	return err
 }
+
+func (service *TodoService) DeleteTodo(todoId string) error {
+	todo := service.todoRepository.FindById(todoId)
+	if todo == nil {
+		return exception.NewTodoNotFound()
+	}
+	service.todoRepository.DeleteTodo(todo.Id)
+	return nil
+}

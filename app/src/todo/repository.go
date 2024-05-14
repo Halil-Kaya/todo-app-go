@@ -59,3 +59,7 @@ func (repo *TodoRepository) UpdateTodo(todoId primitive.ObjectID, updateFields b
 	_, err := repo.collection.UpdateOne(context.Background(), bson.D{{"_id", todoId}}, updateQuery)
 	return err
 }
+
+func (repo *TodoRepository) DeleteTodo(todoId primitive.ObjectID) {
+	repo.collection.DeleteOne(context.Background(), bson.D{{"_id", todoId}})
+}

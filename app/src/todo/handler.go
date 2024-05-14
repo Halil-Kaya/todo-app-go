@@ -91,7 +91,13 @@ func (h *TodoHttpHandler) updateTodo(ctx *fiber.Ctx) error {
 }
 
 func (h *TodoHttpHandler) deleteTodo(ctx *fiber.Ctx) error {
-	return nil
+	todoId := ctx.Params("todoId")
+	err := h.todoService.DeleteTodo(todoId)
+	if err != nil {
+		return utility.ErrorResponse(ctx, err)
+	}
+	h.todoService.DeleteTodo(todoId)
+	return utility.OkResponse(ctx, struct{}{})
 }
 
 func (h *TodoHttpHandler) RegisterRoutes(app *fiber.App) {
